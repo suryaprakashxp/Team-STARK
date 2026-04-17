@@ -69,12 +69,16 @@ def generate_report(medications: list[str], patient_context: str) -> dict:
     Ask Gemini to identify drug-drug interactions and output a markdown string 
     compatible with the frontend regex parsers.
     """
-    # Fetch key fresh from the file every time so we don't need to restart the Flask server!
-    env_dict = dotenv_values(".env")
-    api_key = env_dict.get("GEMINI_API_KEY")
+    # 1. Try to get key from system environment variables (Production/Render)
+    api_key = os.environ.get("GEMINI_API_KEY")
+    
+    # 2. Fallback to .env file if system variable isn't set (Local)
+    if not api_key:
+        env_dict = dotenv_values(".env")
+        api_key = env_dict.get("GEMINI_API_KEY")
     
     if not api_key:
-        return "Error: No GEMINI_API_KEY found in backend/.env file."
+        return "Error: No GEMINI_API_KEY found in Environment or .env file."
         
     client = genai.Client(api_key=api_key)
     
