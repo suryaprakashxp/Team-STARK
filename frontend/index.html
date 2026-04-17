@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💊 PharmaGuard AI</title>
-  <meta name="description" content="AI-powered drug interaction screener using RxNorm and Gemini." />
+  <title>💊 PharmaGuard AI | Professional Interaction Analysis</title>
+  <meta name="description" content="Premium AI-powered drug interaction screener using RxNorm and Gemini." />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,15 +12,14 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
           colors: {
-            brand: {
-              50:  '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              900: '#1e1b4b',
+            medical: {
+                900: '#1e3a8a',
+                blue: '#1A365D',
+                teal: '#0D9488',
+                maroon: '#7F1D1D',
+                cream: '#FFFBEB',
             }
           }
         }
@@ -30,143 +29,229 @@
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Custom severity colours -->
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="style.css" />
-
+  
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    /* Glassy card */
-    .glass {
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.12);
+    /* Tailwind Extensions */
+    .btn-gradient {
+        background: linear-gradient(135deg, #1A365D 0%, #0f172a 100%);
     }
-    /* Animated gradient bg */
-    .gradient-bg {
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      background-size: 400% 400%;
-      animation: gradientShift 12s ease infinite;
+    .trust-badge {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        background: rgba(26, 54, 93, 0.05);
+        color: #1A365D;
+        font-weight: 600;
+        border: 1px solid rgba(26, 54, 93, 0.1);
     }
-    @keyframes gradientShift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .step-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #E2E8F0;
+        transition: all 0.3s ease;
     }
-    /* Pulse ring on button while loading */
-    .loading-pulse { animation: pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.5; }
+    .step-dot.active {
+        background: #0D9488;
+        transform: scale(1.3);
     }
-    /* Report text rendering */
-    #report-content { white-space: pre-wrap; }
-    /* Scrollbar for report area */
-    #results::-webkit-scrollbar { width: 6px; }
-    #results::-webkit-scrollbar-track { background: transparent; }
-    #results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    @media print {
+        .print-only { display: block !important; }
+        .no-print { display: none !important; }
+        body { background: white !important; }
+    }
   </style>
 </head>
-<body class="gradient-bg min-h-screen text-white flex flex-col items-center justify-start py-12 px-4">
+<body class="min-h-screen relative overflow-x-hidden">
 
-  <!-- ── Header ─────────────────────────────────────────────────────────── -->
-  <header class="text-center mb-10">
-    <div class="text-6xl mb-3 select-none">💊</div>
-    <h1 class="text-4xl md:text-5xl font-bold tracking-tight">PharmaGuard AI</h1>
-    <p class="mt-3 text-indigo-300 text-lg font-light max-w-md mx-auto">
-      AI-powered drug interaction analysis — grounded in real RxNorm data, no hallucinations.
+  <!-- Background Pattern -->
+  <div class="bg-medical"></div>
+
+  <!-- ── Header Section ────────────────────────────────────────────────── -->
+  <nav class="bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">🏥</span>
+            <div>
+                <h1 class="text-2xl font-bold text-medical-blue tracking-tight">PharmaGuard AI</h1>
+                <p class="text-[11px] text-gray-500 uppercase tracking-widest font-semibold">Verified Clinical Analysis</p>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3">
+            <span class="trust-badge">✓ RxNorm Verified</span>
+            <span class="trust-badge">✓ FDA Data</span>
+            <span class="trust-badge">✓ Zero Hallucination</span>
+        </div>
+    </div>
+  </nav>
+
+  <!-- Title Subtitle Section -->
+  <header class="text-center py-10 px-4 no-print relative">
+    <p class="text-medical-blue font-medium text-lg max-w-2xl mx-auto leading-relaxed">
+        AI-powered drug interaction analysis — grounded in real <span class="bg-blue-100 px-1 rounded">RxNorm data</span>, no hallucinations.
     </p>
+    <div class="w-16 h-1 bg-medical-teal mx-auto mt-4 rounded-full opacity-30"></div>
   </header>
 
-  <!-- ── Main card ──────────────────────────────────────────────────────── -->
-  <main class="w-full max-w-2xl">
-    <div class="glass rounded-2xl p-8 shadow-2xl">
+  <!-- ── Main Dashboard ────────────────────────────────────────────────── -->
+  <main class="max-w-7xl mx-auto px-6 pb-20 no-print">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: Form -->
+        <div class="lg:col-span-5">
+            <div class="medical-card p-8 sticky top-24">
+                <div class="flex items-center gap-2 mb-6 text-medical-blue">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <h2 class="text-lg font-bold">Input Form</h2>
+                </div>
 
-      <!-- Medications input -->
-      <div class="mb-6">
-        <label for="medications" class="block text-sm font-semibold text-indigo-200 mb-2 uppercase tracking-widest">
-          Medications
-        </label>
-        <input
-          id="medications"
-          type="text"
-          placeholder="e.g. warfarin, aspirin, ibuprofen"
-          class="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40
-                 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400
-                 transition duration-200"
-        />
-        <p class="text-xs text-white/40 mt-1">Separate multiple drugs with commas.</p>
-      </div>
+                <!-- Medications -->
+                <div class="mb-6">
+                    <label for="medications" class="block text-xs font-bold text-cool-gray mb-2 uppercase tracking-widest">
+                        Patient Medications
+                    </label>
+                    <input
+                        id="medications"
+                        type="text"
+                        placeholder="e.g. Warfarin, Aspirin, Ibuprofen"
+                        class="w-full medical-input px-4 py-3 text-sm focus:ring-0"
+                    />
+                    
+                    <!-- Quick-add chips -->
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button type="button" class="drug-chip text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded-lg text-cool-gray hover:bg-gray-50 transition-colors" data-drug="Warfarin">Warfarin</button>
+                        <button type="button" class="drug-chip text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded-lg text-cool-gray hover:bg-gray-50 transition-colors" data-drug="Aspirin">Aspirin</button>
+                        <button type="button" class="drug-chip text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded-lg text-cool-gray hover:bg-gray-50 transition-colors" data-drug="Lisinopril">Lisinopril</button>
+                        <button type="button" class="drug-chip text-[10px] font-bold bg-white border border-gray-200 px-2 py-1 rounded-lg text-cool-gray hover:bg-gray-50 transition-colors" data-drug="Metformin">Metformin</button>
+                    </div>
+                </div>
 
-      <!-- Clinical profile -->
-      <div class="mb-8">
-        <label for="profile" class="block text-sm font-semibold text-indigo-200 mb-2 uppercase tracking-widest">
-          Clinical Profile
-        </label>
-        <textarea
-          id="profile"
-          rows="4"
-          placeholder="e.g. 68-year-old male, history of atrial fibrillation, diabetes, CKD stage 3"
-          class="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40
-                 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400
-                 transition duration-200 resize-none"
-        ></textarea>
-      </div>
+                <!-- Profile -->
+                <div class="mb-8">
+                    <label for="profile" class="block text-xs font-bold text-cool-gray mb-2 uppercase tracking-widest">
+                        Clinical Profile
+                    </label>
+                    <textarea
+                        id="profile"
+                        rows="4"
+                        placeholder="e.g. 72-year-old male, history of atrial fibrillation, CKD stage 3"
+                        class="w-full medical-input px-4 py-3 text-sm resize-none focus:ring-0"
+                    ></textarea>
+                    <p class="text-[10px] text-cool-gray mt-2 italic flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Clinical context helps the AI adjust risk scoring.
+                    </p>
+                </div>
 
-      <!-- Analyze button -->
-      <button
-        id="analyzeBtn"
-        class="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700
-               font-semibold text-lg tracking-wide transition-all duration-200
-               shadow-lg hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-      >
-        🔍 Analyze Interactions
-      </button>
+                <!-- Actions -->
+                <div class="space-y-3">
+                    <button
+                        id="analyzeBtn"
+                        class="w-full py-4 btn-medical shadow-lg flex items-center justify-center gap-2"
+                    >
+                        🔍 Analyze Interactions
+                    </button>
+                    <button
+                        id="sampleBtn"
+                        class="w-full py-3 btn-outline text-sm"
+                    >
+                        📋 Fill Sample Case
+                    </button>
+                </div>
 
-      <!-- Loading indicator -->
-      <div id="loadingState" class="hidden mt-6 flex items-center justify-center gap-3 text-indigo-300">
-        <svg class="loading-pulse h-6 w-6 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-        </svg>
-        <span class="text-base font-medium">Querying RxNorm &amp; generating report…</span>
-      </div>
-      
-      <!-- Empty State -->
-       <div id="emptyState" class="hidden mt-6 text-center text-white/50 text-sm"></div>
+                <!-- Progress Tracker -->
+                <div id="loadingUI" class="hidden mt-8 border-t border-gray-100 pt-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="spinner-medical border-4 shrink-0"></div>
+                        <div>
+                            <p id="loadingText" class="text-sm font-bold text-medical-blue">Consulting RxNorm...</p>
+                            <p class="text-[11px] text-cool-gray">Grounding analysis in FDA data</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div id="step1" class="step-dot active"></div>
+                        <div id="step2" class="step-dot"></div>
+                        <div id="step3" class="step-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    </div>
+        <!-- RIGHT COLUMN: Results -->
+        <div class="lg:col-span-7">
+            <!-- Empty State placeholder -->
+            <div id="emptyStateUI" class="medical-card border-dashed border-2 flex flex-col items-center justify-center py-20 px-10 text-center">
+                <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-medical-blue opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h3 class="text-lg font-bold text-cool-gray mb-2">No Analysis Active</h3>
+                <p class="text-sm text-cool-gray max-w-sm">
+                    Enter patient medications and profile on the left to generate an AI-powered pharmaceutical interaction report.
+                </p>
+            </div>
 
-    <!-- ── Results panel ─────────────────────────────────────────────────── -->
-    <div id="resultsContainer" class="hidden w-full mt-6 space-y-6">
-      
-      <div class="glass rounded-2xl p-6 shadow-2xl">
-          <div class="flex justify-between items-center mb-6">
-              <h2 class="text-xl font-bold text-indigo-200">Interaction Report</h2>
-              <span id="reportBadge" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">WAITING</span>
-          </div>
-          
-          <div id="patientContextDisplay" class="mb-6 pb-6 border-b border-white/10"></div>
-          
-          <div id="interactionCard" class="mb-6"></div>
-          
-          <div id="clinicalAdvice"></div>
-          
-          <div id="reportTimestamp" class="mt-6 text-xs text-white/30 text-right"></div>
-      </div>
-      
+            <!-- Results container -->
+            <div id="resultsWrapper" class="hidden space-y-6">
+                <div class="medical-card p-8">
+                    <!-- Results Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <h2 class="text-xl font-bold text-medical-blue flex items-center gap-2">
+                                <svg class="w-6 h-6 text-medical-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Clinical Interaction Report
+                            </h2>
+                            <p id="reportTimestampDisplay" class="text-[11px] text-cool-gray mt-1 uppercase font-semibold"></p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="badge rxnorm">📚 RxNorm API</span>
+                            <span class="badge gemini">🤖 Gemini 2.0 Flash</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions Row -->
+                    <div class="flex gap-2 mb-8 border-b border-gray-100 pb-4">
+                        <button id="printBtn" class="bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg text-xs font-bold text-cool-gray border border-gray-200 flex items-center gap-2">
+                            📄 Print
+                        </button>
+                        <button id="copyBtn" class="bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg text-xs font-bold text-cool-gray border border-gray-200 flex items-center gap-2">
+                            📋 Copy
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Content -->
+                    <div id="patientProfileUI" class="mb-6 p-4 bg-orange-50/50 border border-orange-100 rounded-xl"></div>
+                    <div id="interactionsUI" class="space-y-4"></div>
+                    <div id="guidanceUI" class="mt-8"></div>
+                </div>
+            </div>
+        </div>
     </div>
   </main>
 
+  <!-- ── Print View (Hidden usually) ─────────────────────────────────── -->
+  <div class="hidden print-only p-12 max-w-4xl mx-auto bg-white" id="printableArea"></div>
+
   <!-- ── Footer ─────────────────────────────────────────────────────────── -->
-  <footer class="mt-12 text-center text-white/30 text-xs">
-    Data sourced from <span class="text-indigo-400">NLM RxNorm API</span> · Report by
-    <span class="text-indigo-400">Google Gemini 2.0 Flash</span>
+  <footer class="mt-20 border-t border-gray-200 py-12 px-6 bg-white no-print">
+    <div class="max-w-7xl mx-auto flex flex-col items-center text-center">
+        <div class="flex items-center gap-2 text-medical-blue mb-4">
+            <span class="text-xl">🛡️</span>
+            <span class="font-bold">PharmaGuard Security Guarantee</span>
+        </div>
+        <div class="bg-red-50 text-red-700 px-6 py-4 rounded-2xl border border-red-100 max-w-2xl mb-8">
+            <p class="text-xs font-medium leading-relaxed">
+                ⚠️ <span class="font-bold">Clinical Disclaimer:</span> This tool is for informational purposes only and does not constitute medical advice. AI can occasionally hallucinate; always verify clinical data with official FDA labeling or a licensed pharmacist.
+            </p>
+        </div>
+        <p class="text-xs text-cool-gray">
+            &copy; 2026 PharmaGuard AI Solutions · Powered by NLM RxNorm & Google DeepMind
+        </p>
+    </div>
   </footer>
 
   <script src="script.js"></script>

@@ -1,22 +1,22 @@
 import os
+import functools
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from dotenv import load_dotenv
+# Forcing reload to pick up new API key
+from dotenv import load_dotenv, dotenv_values
 from google import genai
 from google.genai import types as genai_types
-
-# ── Load environment variables ──────────────────────────────────────────────
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # ── Flask app setup ─────────────────────────────────────────────────────────
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 CORS(app)
 
-# ── Gemini setup ────────────────────────────────────────────────────────────
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+# The client is now initialized dynamically inside generate_report()
+# to support hourly token updates without restarts.
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # HEALTH CHECK
@@ -41,6 +41,7 @@ def health():
 RXNAV_BASE = "https://rxnav.nlm.nih.gov/REST"
 
 
+@functools.lru_cache(maxsize=128)
 def get_rxcui(drug_name: str) -> str | None:
     """
     Look up the first RxCUI for a drug name from the RxNorm API.
@@ -68,6 +69,15 @@ def generate_report(medications: list[str], patient_context: str) -> dict:
     Ask Gemini to identify drug-drug interactions and output a markdown string 
     compatible with the frontend regex parsers.
     """
+    # Fetch key fresh from the file every time so we don't need to restart the Flask server!
+    env_dict = dotenv_values(".env")
+    api_key = env_dict.get("GEMINI_API_KEY")
+    
+    if not api_key:
+        return "Error: No GEMINI_API_KEY found in backend/.env file."
+        
+    client = genai.Client(api_key=api_key)
+    
     drugs_list = ", ".join(medications)
     
     prompt = f"""You are a clinical pharmacist. Identify and explain drug interactions between these medications:
@@ -96,7 +106,7 @@ Clinical Guidance:
 [Provide standard advice like consult doctor before changes.]
 """
 
-    response = gemini_client.models.generate_content(
+    response = client.models.generate_content(
         model="gemini-flash-latest",
         contents=prompt,
         config=genai_types.GenerateContentConfig(temperature=0.1),
@@ -123,19 +133,21 @@ def check_interactions():
     if not medications or len(medications) < 1:
         return jsonify({"error": "Provide at least one medication."}), 400
 
-    # Resolve RxCUIs
-    rxcui_list: list[str] = []
-    unresolved: list[str] = []
-    for drug in medications:
-        rxcui = get_rxcui(drug.strip())
+    # Resolve RxCUIs in parallel for maximum speed
+    resolved_data = [] # List of tuples: (original_name, rxcui_or_none)
+    unique_meds = list(set([m.strip() for m in medications if m.strip()]))
+    
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        results = list(executor.map(get_rxcui, unique_meds))
+    
+    valid_drugs = []
+    unresolved = []
+    
+    for drug, rxcui in zip(unique_meds, results):
         if rxcui:
-            rxcui_list.append(rxcui)
+            valid_drugs.append(drug)
         else:
-            unresolved.append(drug.strip())
-
-    # Validated drugs
-    valid_drugs = [d for d in medications if get_rxcui(d.strip())]
-    unresolved = [d for d in medications if not get_rxcui(d.strip())]
+            unresolved.append(drug)
 
     # Build context note for unresolved drugs
     context = profile
@@ -144,7 +156,8 @@ def check_interactions():
 
     # Generate Gemini report using the verified drug names
     try:
-        report = generate_report(medications, context)
+        # We pass only unique drugs to Gemini to keep it fast
+        report = generate_report(unique_meds, context)
     except Exception as exc:
         app.logger.error("Gemini generation error: %s", exc)
         return jsonify({"error": f"Report generation failed: {exc}"}), 500

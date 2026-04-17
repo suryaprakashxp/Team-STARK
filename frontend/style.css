@@ -1,26 +1,123 @@
-/* Additional custom styles if needed */
-@media print {
-    nav, footer, button, .bg-pattern {
-        display: none !important;
-    }
-    .card-shadow {
-        box-shadow: none !important;
-        border: 1px solid #e5e7eb;
-    }
+/* 
+   PharmaGuard AI - Premium Medical Theme
+   Professional, high-contrast, clinician-grade styling.
+*/
+
+:root {
+    --primary-blue: #1A365D;
+    --secondary-teal: #0D9488;
+    --tertiary-maroon: #7F1D1D;
+    --medical-cream: #FFFBEB;
+    --slate-gray: #1E293B;
+    --cool-gray: #64748B;
 }
 
-/* Smooth scrolling */
-html {
-    scroll-behavior: smooth;
+body {
+    background-color: var(--medical-cream);
+    color: var(--slate-gray);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
 }
 
-/* Custom focus styles */
-*:focus {
+/* Background Medical Pattern */
+.bg-medical {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: 
+        linear-gradient(90deg, rgba(26, 54, 93, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(26, 54, 93, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Premium Cards */
+.medical-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.medical-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+/* Form Controls */
+.medical-input {
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+}
+
+.medical-input:focus {
     outline: none;
+    border-color: var(--secondary-teal);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
 }
 
-/* Loading animation */
-@keyframes pulse-slow {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+/* Buttons */
+.btn-medical {
+    background: linear-gradient(to bottom, var(--primary-blue), #162e50);
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-medical:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+}
+
+.btn-outline {
+    border: 2px solid var(--primary-blue);
+    color: var(--primary-blue);
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+    background: rgba(26, 54, 93, 0.05);
+}
+
+/* Severity Indicators */
+.severity-card { border-left-width: 4px; }
+.sev-high { border-left-color: var(--tertiary-maroon); background: #fef2f2; }
+.sev-mod { border-left-color: #D97706; background: #fffbeb; }
+.sev-min { border-left-color: #EAB308; background: #fffdf5; }
+.sev-safe { border-left-color: #059669; background: #f0fdf4; }
+
+/* Pulse Animation for High Risk */
+@keyframes pulse-red {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 29, 29, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(127, 29, 29, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(127, 29, 29, 0); }
+}
+
+.animate-pulse-red {
+    animation: pulse-red 2s infinite;
+}
+
+/* Spinner Customization */
+.spinner-medical {
+    border: 3px solid #E2E8F0;
+    border-top: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Print Styles */
+@media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .medical-card { box-shadow: none; border: 1px solid #eee; }
 }
