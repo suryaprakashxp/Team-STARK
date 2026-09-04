@@ -80,7 +80,7 @@ def generate_report(medications: list[str], patient_context: str) -> dict:
         api_key = env_dict.get("GEMINI_API_KEY")
     
     if not api_key:
-        return "Error: No GEMINI_API_KEY found in Environment or .env file."
+        raise ValueError("GEMINI_API_KEY environment variable is missing on Render. Please add GEMINI_API_KEY under Render Environment settings.")
         
     client = genai.Client(api_key=api_key)
     
