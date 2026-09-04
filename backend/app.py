@@ -41,8 +41,10 @@ def health():
 RXNAV_BASE = "https://rxnav.nlm.nih.gov/REST"
 
 
+from typing import Optional, List, Dict
+
 @functools.lru_cache(maxsize=128)
-def get_rxcui(drug_name: str) -> str | None:
+def get_rxcui(drug_name: str) -> Optional[str]:
     """
     Look up the first RxCUI for a drug name from the RxNorm API.
     Returns the RXCUI string or None if not found.
