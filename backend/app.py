@@ -112,13 +112,26 @@ Clinical Guidance:
 [Provide standard advice like consult doctor before changes.]
 """
 
-    response = client.models.generate_content(
-        model="gemini-flash-latest",
-        contents=prompt,
-        config=genai_types.GenerateContentConfig(temperature=0.1),
-    )
-    
-    return response.text
+    # Retry up to 3 times for 503 UNAVAILABLE / overload errors
+    last_error = None
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config=genai_types.GenerateContentConfig(temperature=0.1),
+            )
+            return response.text
+        except Exception as e:
+            last_error = e
+            err_str = str(e)
+            if "503" in err_str or "UNAVAILABLE" in err_str:
+                import time
+                time.sleep(2 * (attempt + 1))  # wait 2s, 4s, 6s between retries
+                continue
+            raise  # re-raise non-503 errors immediately
+    raise last_error
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════
