@@ -91,7 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             updateStep(1, "Analyzing interactions with Gemini 2.0...");
             
-            if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || `Server Error (${response.status})`);
+            }
 
             const data = await response.json();
             
@@ -105,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Analysis Fault:', error);
-            showErrorState(profile);
+            showErrorState(error.message);
         } finally {
             analyzeBtn.disabled = false;
         }
@@ -230,9 +233,9 @@ function showErrorState(context) {
     emptyStateUI.innerHTML = `
         <div class="text-red-600 p-8">
             <span class="text-4xl mb-4 block">⚠️</span>
-            <h3 class="text-lg font-bold mb-2">Network Connection Fault</h3>
-            <p class="text-sm opacity-80 mb-4">PharmaGuard was unable to establish a secure link with the RxNorm database or Gemini AI.</p>
-            <button onclick="location.reload()" class="btn-outline px-6 py-2 text-xs">Re-establish Connection</button>
+            <h3 class="text-lg font-bold mb-2">Analysis Service Exception</h3>
+            <p class="text-sm opacity-90 font-medium mb-4 bg-red-50 p-3 rounded-lg border border-red-200">${context || 'PharmaGuard was unable to establish a secure link with the RxNorm database or Gemini AI.'}</p>
+            <button onclick="location.reload()" class="btn-outline px-6 py-2 text-xs">Try Again</button>
         </div>
     `;
     document.getElementById('loadingUI').classList.add('hidden');
